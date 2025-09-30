@@ -1,0 +1,44 @@
+{
+  "name": "cosmos-ws-subscriber",
+  "version": "0.0.1",
+  "description": "A lightweight WebSocket client for Cosmos SDK / Tendermint chains with automatic reconnect, ping/pong heartbeat, and subscription restore. Supports filtering tx events (MsgSend, MsgMultiSend, etc.) and decoding transactions.",
+  "homepage": "https://github.com/ricco381/cosmos-ws-subscriber#readme",
+  "bugs": {
+    "url": "https://github.com/ricco381/cosmos-tx-parser/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ricco381/cosmos-ws-subscriber.git"
+  },
+  "keywords": [
+    "cosmos",
+    "tendermint",
+    "cometbft",
+    "websocket",
+    "subscriber",
+    "events",
+    "blockchain",
+    "msgsend",
+    "tx"
+  ],
+  "license": "MIT",
+  "author": "ricco381",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "cosmos-tx-parser": "file:../parsers",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.18.1",
+    "typescript": "5.6.2"
+  }
+}
