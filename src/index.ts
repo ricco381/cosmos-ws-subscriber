@@ -2,7 +2,7 @@ import { EventEmitter } from "events";
 import { ConnectionManager } from "./connection";
 import { SubscriptionManager } from "./subscription";
 import { CosmosSubscriberOptions} from "./types";
-import { parsingFromWs } from "cosmos-tx-parser";
+import { parsingFromWs } from "@ricco381/cosmos-tx-parser";
 
 export class CosmosSubscriber extends EventEmitter {
     private conn: ConnectionManager;
