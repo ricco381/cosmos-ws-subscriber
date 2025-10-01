@@ -2,7 +2,6 @@ import { EventEmitter } from "events";
 import { ConnectionManager } from "./connection";
 import { SubscriptionManager } from "./subscription";
 import { CosmosSubscriberOptions} from "./types";
-import { parsingFromWs } from "@ricco381/cosmos-tx-parser";
 
 export class CosmosSubscriber extends EventEmitter {
     private conn: ConnectionManager;
@@ -37,10 +36,8 @@ export class CosmosSubscriber extends EventEmitter {
         this.conn.disconnect();
     }
 
-    public subscribe(action: string) {
-        this.subs.add(action, (msg) => {
-            this.emit("message", msg);
-        });
+    public subscribe(query: string, cb: (msg: any) => void) {
+        this.subs.add(query, cb);
 
         return this;
     }
