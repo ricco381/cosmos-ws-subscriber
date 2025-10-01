@@ -28,9 +28,6 @@ export class CosmosSubscriber extends EventEmitter {
         this.conn.on("close", () => this.emit("disconnect"));
         this.conn.on("pong", () => this.emit("pong"));
         this.conn.on("error", (err) => this.emit("error", err));
-
-        this.conn.on("subscribed", (q) =>  this.emit("subscribe", q));
-        this.conn.on("subscribeError", (err) => this.emit("subscribeError", err));
     }
 
     public start() {
