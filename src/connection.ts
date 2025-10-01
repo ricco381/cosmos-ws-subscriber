@@ -18,8 +18,6 @@ export class ConnectionManager extends EventEmitter {
     }
 
     connect() {
-        this.cleanup();
-
         this.ws = new WebSocket(this.opts.rpcUrl);
 
         this.ws.on("open", () => this.onOpen());
@@ -59,7 +57,6 @@ export class ConnectionManager extends EventEmitter {
 
     private onClose() {
         this.emit("close");
-        this.scheduleReconnect();
     }
 
     private onError(err: Error) {
@@ -80,7 +77,7 @@ export class ConnectionManager extends EventEmitter {
                 setTimeout(() => {
                     const sinceLast = Date.now() - this.lastMessageTime;
                     if (sinceLast > pongTimeout) {
-                        this.emit("error", new Error("pong timeout"));
+                        this.emit("error", "pong timeout");
                         this.scheduleReconnect();
                     }
                 }, pongTimeout);
@@ -93,14 +90,13 @@ export class ConnectionManager extends EventEmitter {
 
         const timeout = this.opts.messageTimeout ?? 120000;
         this.messageTimeout = setTimeout(() => {
-            const sinceLast = Date.now() - this.lastMessageTime;
-            this.emit("error", new Error(`no messages for ${sinceLast}ms`));
+            this.emit("error", `no messages for ${timeout / 1000} sec`);
             this.scheduleReconnect();
         }, timeout);
     }
 
     private scheduleReconnect() {
-        if (!this.manualClose) return;
+        if (this.manualClose) return;
         if (!this.opts.autoReconnect) return;
         if (this.isReconnecting) return;
 
@@ -128,16 +124,17 @@ export class ConnectionManager extends EventEmitter {
 
         if (this.ws) {
             try {
-                this.ws.on("close", () => {
-                    this.ws?.removeAllListeners();
-                    this.ws = null;
-
+                this.ws.removeAllListeners();
+                this.ws.once("close", () => {
                     this.onClose();
                 });
 
                 this.ws.close();
+
             } catch (e) {
                 this.emit("error", e);
+            } finally {
+                this.ws = null;
             }
         }
     }
