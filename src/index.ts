@@ -7,7 +7,6 @@ import { parsingFromWs } from "@ricco381/cosmos-tx-parser";
 export class CosmosSubscriber extends EventEmitter {
     private conn: ConnectionManager;
     private subs: SubscriptionManager;
-    private parser?: (msg: any) => any;
 
     constructor(private opts: CosmosSubscriberOptions) {
         super();
@@ -38,46 +37,11 @@ export class CosmosSubscriber extends EventEmitter {
         this.conn.disconnect();
     }
 
-    public subscribeTx() {
-        this.subs.add("tm.event='Tx'", (msg) => {
-            this.prepareResponse('tx', msg)
-        });
-
-        return this;
-    }
-
-    public subscribeMsgSend() {
-        this.subs.add("tm.event='Tx' AND message.action='/cosmos.bank.v1beta1.MsgSend'", (msg) => {
-            this.prepareResponse('msg_send', msg)
-        });
-
-        return this;
-    }
-
-    public subscribeMsgMultiSend() {
-        this.subs.add("tm.event='Tx' AND message.action='/cosmos.bank.v1beta1.MsgMultiSend'", (msg) => {
-            this.prepareResponse('msg_multi_send', msg)
-        });
-
-        return this;
-    }
-
-    public withParserTx(parserFn?: (msg: any) => any) {
-        this.parser = parserFn ?? parsingFromWs;
-
-        return this;
-    }
-
-    private prepareResponse(name: string, msg: any) {
-        if (this.parser) {
-            const {result} = msg;
-            if (!result) return;
-
-            this.emit("message", this.parser(result));
-        } else {
+    public subscribe(action: string) {
+        this.subs.add(action, (msg) => {
             this.emit("message", msg);
-        }
+        });
 
-       this.emit(name, msg);
+        return this;
     }
 }
